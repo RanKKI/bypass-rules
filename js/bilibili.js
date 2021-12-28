@@ -15,20 +15,25 @@ function removeWhenMatch(arr, met) {
         arr.splice(i, 1)
     }
 }
-
+var obj = JSON.parse($response.body);
 if (obj.data) {
     delete obj.data.vip_section
     delete obj.data.vip_section_right
     delete obj.data.vip_section_v2
     delete obj.data.live_tip
-    removeWhenMatch(obj.data.sections_v2, (item) => {
-        return item.title == "推荐服务"
-    })
-    removeWhenMatch(obj.data.sections_v2, (item) => {
-        return item.title == "创作中心"
-    })
-    removeWhenMatch(obj.data.sections_v2, (item) => {
-        return item.title == "推荐服务"
-    })
+    let sections = obj.data.sections_v2
+    if (Array.isArray(sections)) {
+        const disabledTitles = ["推荐服务", "创作中心", "推荐服务"]
+        const disabledIds = [408, 409]
+        sections = sections.filter(val => {
+            return disabledTitles.indexOf(val.title) == 0
+        })
+        sections.forEach(val => {
+            val.items = val.items.filter(item => {
+                return disabledIds.indexOf(item.id) == 0
+            })
+        })
+    }
+    obj.data.sections_v2 = sections
 }
 $done({ body: JSON.stringify(obj) }); 
