@@ -14,14 +14,17 @@ function removeWhenMatch(arr, met) {
 }
 
 var obj = JSON.parse($response.body);
-if (obj.data) {
-    delete obj.data.vip_section
-    delete obj.data.vip_section_right
-    delete obj.data.vip_section_v2
-    var sections = obj.data.sections_v2
-    removeWhenMatch(sections, (item) => {
-        return item.title == "推荐服务"
-    })
-
+try {
+    if (obj.data) {
+        delete obj.data.vip_section
+        delete obj.data.vip_section_right
+        delete obj.data.vip_section_v2
+        var sections = obj.data.sections_v2
+        removeWhenMatch(sections, (item) => {
+            return item.title == "推荐服务"
+        })
+    }
+} catch (err) {
+    console.log("[bilibili.js]", (err && err.message) || err)
 }
 $done({ body: JSON.stringify(obj) }); 
